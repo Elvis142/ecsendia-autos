@@ -1,0 +1,253 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Car {
+  id            String            @id @default(cuid())
+  title         String
+  slug          String            @unique
+  year          Int
+  make          String
+  model         String
+  trim          String?
+  price         Float
+  mileage       Int?
+  vin           String?
+  exteriorColor String?
+  interiorColor String?
+  engine        String?
+  transmission  TransmissionType?
+  driveType     DriveType?
+  fuelType      FuelType?
+  bodyType      BodyType?
+  condition     Condition?
+  city          String?
+  state         String?
+  description   String?
+  features      String[]
+  status        CarStatus         @default(AVAILABLE)
+  visibility    Visibility        @default(PUBLISHED)
+  featured      Boolean           @default(false)
+  viewCount     Int               @default(0)
+  sourceUrl     String?
+  aiImported    Boolean           @default(false)
+  aiImportedAt  DateTime?
+  photos        Photo[]
+  inquiries     Inquiry[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  url       String
+  key       String?
+  isMain    Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Inquiry {
+  id               String        @id @default(cuid())
+  carId            String
+  car              Car           @relation(fields: [carId], references: [id])
+  fullName         String
+  phone            String
+  email            String
+  preferredContact ContactMethod
+  vehiclePrice     Float
+  customerOffer    Float?
+  shippingNeeded   Boolean       @default(false)
+  shippingCity     String?
+  shippingState    String?
+  shippingZip      String?
+  budgetRange      String?
+  paymentPlan      PaymentPlan?
+  notes            String?
+  status           InquiryStatus @default(NEW)
+  ipAddress        String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model AISuggestion {
+  id               String           @id @default(cuid())
+  title            String
+  price            Float?
+  location         String?
+  mileage          Int?
+  year             Int?
+  make             String?
+  model            String?
+  trim             String?
+  description      String?
+  photos           String[]
+  sourceUrl        String           @unique
+  sellerName       String?
+  postedAt         String?
+  firstSeenAt      DateTime         @default(now())
+  lastSeenAt       DateTime         @default(now())
+  opportunityScore Int?
+  scoreReasons     String[]
+  status           SuggestionStatus @default(PENDING)
+  rejectionReason  String?
+  importedCarId    String?
+  priceHistory     PriceHistory[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model PriceHistory {
+  id           String       @id @default(cuid())
+  suggestionId String
+  suggestion   AISuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  price        Float
+  recordedAt   DateTime     @default(now())
+}
+
+model AISearchConfig {
+  id                  String   @id @default(cuid())
+  searchRadius        Int      @default(50)
+  zipCode             String?
+  city                String?
+  state               String?
+  minPrice            Float?
+  maxPrice            Float?
+  minYear             Int?
+  maxYear             Int?
+  maxMileage          Int?
+  keywords            String[]
+  excludeKeywords     String[]
+  preferredMakes      String[]
+  preferredModels     String[]
+  resultsPerDay       Int      @default(20)
+  minOpportunityScore Int      @default(60)
+  emailNotifications  Boolean  @default(true)
+  smsNotifications    Boolean  @default(false)
+  adminPhone          String?
+  adminEmail          String?
+  scheduledTime       String   @default("08:00")
+  isActive            Boolean  @default(false)
+  fbCookies           String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model AIRunLog {
+  id             String    @id @default(cuid())
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  status         RunStatus @default(RUNNING)
+  listingsFound  Int?
+  listingsQueued Int?
+  error          String?
+  createdAt      DateTime  @default(now())
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum CarStatus {
+  AVAILABLE
+  PENDING
+  SOLD
+}
+
+enum Visibility {
+  PUBLISHED
+  DRAFT
+}
+
+enum TransmissionType {
+  AUTOMATIC
+  MANUAL
+  CVT
+  SEMI_AUTOMATIC
+}
+
+enum DriveType {
+  FWD
+  RWD
+  AWD
+  FOUR_WD
+}
+
+enum FuelType {
+  GAS
+  DIESEL
+  HYBRID
+  ELECTRIC
+  PLUG_IN_HYBRID
+}
+
+enum BodyType {
+  SEDAN
+  SUV
+  TRUCK
+  COUPE
+  HATCHBACK
+  CONVERTIBLE
+  WAGON
+  MINIVAN
+  VAN
+}
+
+enum Condition {
+  CLEAN_TITLE
+  REBUILT_TITLE
+  SALVAGE
+  LEMON_LAW
+}
+
+enum ContactMethod {
+  TEXT
+  CALL
+  EMAIL
+}
+
+enum PaymentPlan {
+  CASH
+  FINANCE
+  NOT_SURE
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED_DRAFT
+  APPROVED_PUBLISHED
+  REJECTED
+  SAVED_FOR_LATER
+  IMPORTED
+  EXPIRED
+}
+
+enum RunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}

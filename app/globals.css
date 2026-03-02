@@ -2,26 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  img {
+    @apply max-w-full;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container-site {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-maroon-600 to-maroon-700 hover:from-maroon-700 hover:to-maroon-800 text-white font-semibold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-maroon-700/20 hover:shadow-maroon-700/30;
+  }
+
+  .card {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/60 ring-1 ring-gray-100/50;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl shadow-black/5;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-xl border-b border-white/30 shadow-sm shadow-black/5;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-gray-900 md:text-3xl;
+  }
+
+  .price-tag {
+    @apply text-maroon-700 font-bold;
+  }
+
+  .spec-item {
+    @apply flex items-center gap-1.5 text-sm text-gray-600;
+  }
+
+  .btn-glass {
+    @apply bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 hover:border-white/50 text-white font-semibold px-6 py-3 rounded-xl transition-all;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gradient-emerald {
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
