@@ -3,7 +3,7 @@
 
 server {
     listen 80;
-    server_name ecsendia.site www.ecsendia.site;
+    server_name ecsendiautos.ecsendia.site;
 
     # Certbot will replace this block with HTTPS redirect
     location / {

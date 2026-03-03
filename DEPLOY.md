@@ -1,7 +1,7 @@
 # Ecsendia Autos — VPS Deployment Guide
 
 **Server:** DigitalOcean Droplet — Ubuntu 22.04, 2GB RAM, 1 vCPU ($12/mo)
-**Domain:** ecsendia.site
+**Domain:** ecsendiautos.ecsendia.site
 **Stack:** Next.js + PM2 + Nginx + Let's Encrypt
 
 ---
@@ -23,8 +23,7 @@ In your domain registrar (wherever you bought `ecsendia.site`), add:
 
 | Type | Name | Value |
 |------|------|-------|
-| A | `@` | `YOUR_SERVER_IP` |
-| A | `www` | `YOUR_SERVER_IP` |
+| A | `ecsendiautos` | `YOUR_SERVER_IP` |
 
 DNS takes 5–30 minutes to propagate.
 
@@ -83,8 +82,8 @@ nano .env
 ```
 
 Fill in all values (copy from your local `.env`). Make sure to update:
-- `NEXTAUTH_URL="https://ecsendia.site"`
-- `NEXT_PUBLIC_SITE_URL="https://ecsendia.site"`
+- `NEXTAUTH_URL="https://ecsendiautos.ecsendia.site"`
+- `NEXT_PUBLIC_SITE_URL="https://ecsendiautos.ecsendia.site"`
 
 ---
 
@@ -117,7 +116,7 @@ sudo nginx -t   # test config
 sudo systemctl reload nginx
 ```
 
-Your site should now be live at `http://ecsendia.site`.
+Your site should now be live at `http://ecsendiautos.ecsendia.site`.
 
 ---
 
@@ -125,12 +124,12 @@ Your site should now be live at `http://ecsendia.site`.
 
 ```bash
 sudo apt-get install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d ecsendia.site -d www.ecsendia.site
+sudo certbot --nginx -d ecsendiautos.ecsendia.site
 ```
 
 Certbot auto-configures Nginx for HTTPS and sets up auto-renewal.
 
-Your site is now live at **https://ecsendia.site** ✅
+Your site is now live at **https://ecsendiautos.ecsendia.site** ✅
 
 ---
 
