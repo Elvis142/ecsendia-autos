@@ -16,7 +16,7 @@ git pull origin main
 
 # Install dependencies
 echo "▶ Installing dependencies..."
-npm ci --omit=dev
+npm ci
 
 # Generate Prisma client
 echo "▶ Generating Prisma client..."
