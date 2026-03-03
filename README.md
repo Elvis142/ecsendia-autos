@@ -118,4 +118,3 @@ Add all env vars in Vercel dashboard. Update `NEXTAUTH_URL` and `NEXT_PUBLIC_SIT
 
 ---
 
-**Default Admin**: `admin@ecsendiautos.com` / `admin123` — change immediately!
