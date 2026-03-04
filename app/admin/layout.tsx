@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { AdminSidebar } from '@/components/layout/AdminSidebar'
 import { IdleLogout } from '@/components/admin/IdleLogout'
+import { SignOutButton } from '@/components/admin/SignOutButton'
 
 export const metadata = {
   title: { default: 'Admin — Ecsendia Autos', template: '%s | Admin' },
@@ -33,6 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 {(session.user?.name || session.user?.email || 'A')[0].toUpperCase()}
               </span>
             </div>
+            <SignOutButton />
           </div>
         </header>
         {/* Main content */}
