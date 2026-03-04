@@ -100,6 +100,54 @@ export interface AIRunSummaryData {
   }>
 }
 
+export async function sendAdminOTP(data: {
+  email: string
+  code: string
+  ip: string
+  expiresMinutes: number
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; color: #333;">
+      <div style="background: #7B1F2E; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 22px;">Admin Login Code</h1>
+        <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0;">Ecsendia Autos</p>
+      </div>
+
+      <div style="padding: 32px 24px; background: #f9f9f9; text-align: center;">
+        <p style="margin: 0 0 24px; color: #555; font-size: 15px;">
+          Use the code below to complete your admin sign in.
+        </p>
+
+        <div style="background: white; border: 2px solid #7B1F2E; border-radius: 12px; padding: 24px; display: inline-block; margin: 0 auto;">
+          <p style="margin: 0 0 4px; font-size: 12px; color: #999; letter-spacing: 2px; text-transform: uppercase;">Your verification code</p>
+          <p style="margin: 0; font-size: 42px; font-weight: 900; letter-spacing: 10px; color: #7B1F2E; font-family: monospace;">${data.code}</p>
+        </div>
+
+        <p style="margin: 20px 0 0; color: #999; font-size: 13px;">
+          Expires in <strong>${data.expiresMinutes} minutes</strong> &nbsp;·&nbsp; IP: <code style="font-size: 12px;">${data.ip}</code>
+        </p>
+
+        <div style="margin-top: 20px; padding: 12px 16px; background: #fef2f2; border-radius: 6px; text-align: left;">
+          <p style="margin: 0; color: #991b1b; font-size: 12px;">
+            If you did not request this code, someone has your password. Change it immediately.
+          </p>
+        </div>
+      </div>
+
+      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">
+        <p>Ecsendia Autos — Auto Inventory Management</p>
+      </div>
+    </div>
+  `
+
+  await resend.emails.send({
+    from: FROM,
+    to: data.email,
+    subject: `${data.code} — Your Ecsendia Admin Login Code`,
+    html,
+  })
+}
+
 export async function sendAdminLoginAlert(data: {
   email: string
   ip: string
