@@ -27,7 +27,9 @@ export default function SignInPage() {
         redirect: false,
       })
 
-      if (result?.error) {
+      if (result?.status === 429) {
+        setError('Too many login attempts. Please wait 15 minutes and try again.')
+      } else if (result?.error) {
         setError('Invalid email or password')
       } else {
         router.push('/admin')
