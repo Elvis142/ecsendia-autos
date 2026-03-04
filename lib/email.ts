@@ -142,7 +142,7 @@ export async function sendAdminOTP(data: {
 
   await resend.emails.send({
     from: FROM,
-    to: data.email,
+    to: ADMIN_EMAIL,
     subject: `${data.code} — Your Ecsendia Admin Login Code`,
     html,
   })
@@ -209,7 +209,7 @@ export async function sendAdminLoginAlert(data: {
 
   await resend.emails.send({
     from: FROM,
-    to: data.email,
+    to: ADMIN_EMAIL,
     subject: `Admin Login Alert — ${formatDateTime(data.timestamp)}`,
     html,
   })
