@@ -29,6 +29,8 @@ export default function SignInPage() {
 
       if (result?.status === 429) {
         setError('Too many login attempts. Please wait 15 minutes and try again.')
+      } else if (result?.status === 403) {
+        setError('Access denied. Admin login is only allowed from the United States.')
       } else if (result?.error) {
         setError('Invalid email or password')
       } else {

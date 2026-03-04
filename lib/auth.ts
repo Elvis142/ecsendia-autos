@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
+import { sendAdminLoginAlert } from './email'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -31,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
@@ -48,6 +49,20 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) return null
+
+        // Send login alert email (non-blocking)
+        const ip =
+          (req?.headers?.['x-forwarded-for'] as string)?.split(',')[0].trim() ||
+          (req?.headers?.['x-real-ip'] as string) ||
+          'Unknown'
+
+        sendAdminLoginAlert({
+          email: user.email,
+          ip,
+          country: (req?.headers?.['x-geo-country'] as string) || 'US',
+          city: (req?.headers?.['x-geo-city'] as string) || '',
+          timestamp: new Date(),
+        }).catch(() => {}) // fire-and-forget
 
         return {
           id: user.id,

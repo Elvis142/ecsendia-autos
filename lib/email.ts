@@ -100,6 +100,122 @@ export interface AIRunSummaryData {
   }>
 }
 
+export async function sendAdminLoginAlert(data: {
+  email: string
+  ip: string
+  country: string
+  city: string
+  timestamp: Date
+}): Promise<void> {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <div style="background: #7B1F2E; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 22px;">Admin Login Detected</h1>
+        <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0;">Ecsendia Autos</p>
+      </div>
+
+      <div style="padding: 24px; background: #f9f9f9;">
+        <p style="margin: 0 0 16px; color: #555;">Someone just signed into the admin panel. If this was not you, change your password immediately.</p>
+
+        <div style="background: white; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151; width: 40%;">Account</td>
+              <td style="padding: 12px 16px; color: #111827;">${data.email}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151;">Time</td>
+              <td style="padding: 12px 16px; color: #111827;">${formatDateTime(data.timestamp)} (UTC)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151;">IP Address</td>
+              <td style="padding: 12px 16px; color: #111827; font-family: monospace;">${data.ip}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151;">Location</td>
+              <td style="padding: 12px 16px; color: #111827;">${data.city ? data.city + ', ' : ''}${data.country || 'Unknown'}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px 16px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px;">
+          <p style="margin: 0; color: #991b1b; font-size: 13px; font-weight: 600;">
+            If this wasn't you, sign in immediately and change your password.
+          </p>
+        </div>
+
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="${siteUrl}/admin" style="background: #7B1F2E; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">
+            Go to Admin Panel
+          </a>
+        </div>
+      </div>
+
+      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">
+        <p>Ecsendia Autos — Auto Inventory Management</p>
+      </div>
+    </div>
+  `
+
+  await resend.emails.send({
+    from: FROM,
+    to: data.email,
+    subject: `Admin Login Alert — ${formatDateTime(data.timestamp)}`,
+    html,
+  })
+}
+
+export async function sendAdminLoginBlocked(data: {
+  ip: string
+  country: string
+  city: string
+  timestamp: Date
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <div style="background: #b91c1c; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 22px;">Blocked Login Attempt</h1>
+        <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0;">Ecsendia Autos</p>
+      </div>
+
+      <div style="padding: 24px; background: #f9f9f9;">
+        <p style="margin: 0 0 16px; color: #555;">A login attempt was blocked because it came from outside the United States.</p>
+
+        <div style="background: white; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151; width: 40%;">Time</td>
+              <td style="padding: 12px 16px; color: #111827;">${formatDateTime(data.timestamp)} (UTC)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f3f4f6;">
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151;">IP Address</td>
+              <td style="padding: 12px 16px; color: #111827; font-family: monospace;">${data.ip}</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 16px; font-weight: 600; color: #374151;">Location</td>
+              <td style="padding: 12px 16px; color: #ef4444; font-weight: 600;">${data.city ? data.city + ', ' : ''}${data.country || 'Unknown'}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">
+        <p>Ecsendia Autos — Security Alert</p>
+      </div>
+    </div>
+  `
+
+  const adminEmail = process.env.ADMIN_EMAIL || 'autosales@ecsendia.site'
+  await resend.emails.send({
+    from: FROM,
+    to: adminEmail,
+    subject: `Blocked Login Attempt from ${data.country || 'Unknown'} — ${data.ip}`,
+    html,
+  })
+}
+
 export async function sendAIRunSummary(data: AIRunSummaryData): Promise<void> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const topSuggestions = data.suggestions.slice(0, 5)
