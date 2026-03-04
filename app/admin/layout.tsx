@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { AdminSidebar } from '@/components/layout/AdminSidebar'
+import { IdleLogout } from '@/components/admin/IdleLogout'
 
 export const metadata = {
   title: { default: 'Admin — Ecsendia Autos', template: '%s | Admin' },
@@ -16,6 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <IdleLogout />
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
